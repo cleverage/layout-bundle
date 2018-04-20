@@ -1,0 +1,6 @@
+services:
+    clever_age_layout.twig.render_slot_extension:
+        class: CleverAge\LayoutBundle\Twig\RenderSlotExtension
+        public: false
+        tags:
+          - { name: twig.extension }

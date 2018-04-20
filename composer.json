@@ -1,0 +1,39 @@
+{
+    "name": "cleverage/layout-bundle",
+    "description": "Simple modular frontend management with block in Symfony 3",
+    "keywords": [
+        "layout",
+        "block"
+    ],
+    "homepage": "https://github.com/cleverage/layout-bundle",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Valentin Clavreul",
+            "email": "vclavreul@clever-age.com",
+            "role": "Lead Developer"
+        },
+        {
+            "name": "Vincent Chalnot",
+            "email": "vchalnot@clever-age.com",
+            "homepage": "http://chalnot.fr",
+            "role": "Developer"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "CleverAge\\LayoutBundle\\": ""
+        }
+    },
+    "require": {
+        "php": ">=7.0",
+        "symfony/symfony": "^3.0",
+        "twig/twig": "^2.4",
+        "sensio/framework-extra-bundle": "^3.0",
+        "cocur/slugify": "^3.1"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^6.4"
+    }
+}

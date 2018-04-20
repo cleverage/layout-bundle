@@ -1,0 +1,48 @@
+.layout-debug::before {
+    display: none;
+    color: white;
+    font-size: 11px;
+    font-family: monospace;
+    content: attr(data-code);
+    margin-bottom: 2px;
+    padding: 3px;
+    z-index: 999;
+}
+
+.layout-debug[data-debug-mode="hover"]:hover, .layout-debug[data-debug-mode="full"] {
+    outline-style: solid;
+    outline-width: 1px;
+}
+
+.layout-debug[data-debug-mode="hover"][data-type="block"]:hover, .layout-debug[data-debug-mode="full"][data-type="block"] {
+    outline-offset: -2px;
+}
+
+.layout-debug[data-debug-mode="hover"]:hover::before {
+    display: block;
+    float: left;
+    position: absolute;
+}
+
+.layout-debug[data-debug-mode="full"]::before {
+    display: block;
+}
+
+.layout-debug[data-type="slot"] {
+    outline-color: blue;
+    outline-offset: -1px;
+}
+
+.layout-debug[data-type="slot"]::before {
+    background: blue;
+}
+
+.layout-debug[data-type="block"] {
+    outline-color: red;
+    outline-offset: -2px;
+}
+
+.layout-debug[data-type="block"]::before {
+    background: red;
+    margin-left: 10px;
+}
