@@ -13,14 +13,18 @@ namespace CleverAge\LayoutBundle\Block;
 use CleverAge\LayoutBundle\Exception\DuplicatedBlockException;
 use CleverAge\LayoutBundle\Exception\MissingBlockException;
 use Symfony\Component\Cache\Adapter\AdapterInterface;
+use Symfony\Component\Templating\EngineInterface;
 
 /**
  * Holds all the block services, automatically injected through the clever.block tag
  */
 class BlockRegistry
 {
-    /** @var \Twig_Environment */
-    protected $twig;
+    /** @var EngineInterface */
+    protected $renderer;
+
+    /** @var BlockInterface[] */
+    protected $blocks = [];
 
     /** @var AdapterInterface */
     protected $cacheAdapter;
@@ -32,20 +36,14 @@ class BlockRegistry
      */
     protected $enableCache;
 
-
-    /** @var BlockInterface[] */
-    protected $blocks = [];
-
     /**
-     * BlockRegistry constructor.
-     *
-     * @param \Twig_Environment $twig
-     * @param AdapterInterface  $cacheAdapter
-     * @param bool              $enableCache
+     * @param EngineInterface  $renderer
+     * @param AdapterInterface $cacheAdapter
+     * @param bool             $enableCache
      */
-    public function __construct($twig = null, $cacheAdapter = null, bool $enableCache = true)
+    public function __construct(EngineInterface $renderer, $cacheAdapter = null, bool $enableCache = true)
     {
-        $this->twig = $twig;
+        $this->renderer = $renderer;
         $this->cacheAdapter = $cacheAdapter;
         $this->enableCache = $enableCache;
     }
@@ -63,17 +61,17 @@ class BlockRegistry
      *
      * @throws DuplicatedBlockException
      */
-    public function addBlock(BlockInterface $block)
+    public function addBlock(BlockInterface $block): void
     {
         if ($this->hasBlock($block->getCode())) {
             throw DuplicatedBlockException::create($block->getCode());
         }
 
         // Automatically inject services, if available
-        if (isset($this->twig) && $block instanceof TwigAwareBlockInterface) {
-            $block->setTwig($this->twig);
+        if ($block instanceof RendererAwareBlockInterface) {
+            $block->setRenderer($this->renderer);
         }
-        if (isset($this->cacheAdapter) && $block instanceof CacheAdapterAwareBlockInterface) {
+        if (null !== $this->cacheAdapter && $block instanceof CacheAdapterAwareBlockInterface) {
             $block->setEnableCache($this->enableCache);
             $block->setCacheAdapter($this->cacheAdapter);
         }

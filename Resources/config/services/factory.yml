@@ -1,6 +1,0 @@
-services:
-    clever_age_layout.factory.layout:
-        class: CleverAge\LayoutBundle\Layout\LayoutFactory
-        arguments:
-            - '@clever_age_layout.registry.block'
-            - '@debug.stopwatch'

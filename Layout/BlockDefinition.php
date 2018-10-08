@@ -52,18 +52,20 @@ class BlockDefinition
 
     /**
      * This is the block's code inside a slot, uniquely representing it
+     *
      * @return string
      */
-    public function getCode() : string
+    public function getCode(): string
     {
         return $this->code;
     }
 
     /**
      * This is the code of the service block, it can default to the code of the block himself
+     *
      * @return string
      */
-    public function getBlockCode() : string
+    public function getBlockCode(): string
     {
         if (null === $this->blockCode) {
             return $this->code;
@@ -75,7 +77,7 @@ class BlockDefinition
     /**
      * @return array
      */
-    public function getParameters() : array
+    public function getParameters(): array
     {
         return $this->parameters;
     }
@@ -86,11 +88,11 @@ class BlockDefinition
      *
      * @return BlockDefinition
      */
-    public function setParameters(array $parameters, $merge = false) : BlockDefinition
+    public function setParameters(array $parameters, $merge = false): BlockDefinition
     {
         if ($merge) {
             $this->parameters = array_merge($this->parameters, $parameters);
-        } /** @noinspection DefaultValueInElseBranchInspection */ else {
+        } else {
             $this->parameters = $parameters;
         }
 
@@ -104,7 +106,7 @@ class BlockDefinition
      *
      * @return BlockDefinition
      */
-    public function addParameter(string $key, $value) : BlockDefinition
+    public function addParameter(string $key, $value): BlockDefinition
     {
         $this->parameters[$key] = $value;
 
@@ -114,15 +116,15 @@ class BlockDefinition
     /**
      * @return boolean
      */
-    public function isDisplayed() : bool
+    public function isDisplayed(): bool
     {
-        return ($this->displayed === 'true' || $this->displayed === true);
+        return ('true' === $this->displayed || true === $this->displayed);
     }
 
     /**
      * @return string
      */
-    public function getAfter() : string
+    public function getAfter(): string
     {
         return $this->after ?: '';
     }
@@ -130,7 +132,7 @@ class BlockDefinition
     /**
      * @return string
      */
-    public function getBefore() : string
+    public function getBefore(): string
     {
         return $this->before ?: '';
     }
@@ -138,7 +140,7 @@ class BlockDefinition
     /**
      * @param string $blockCode
      */
-    public function setBlockCode($blockCode)
+    public function setBlockCode($blockCode): void
     {
         $this->blockCode = $blockCode;
     }
@@ -146,7 +148,7 @@ class BlockDefinition
     /**
      * @param bool $displayed
      */
-    public function setDisplayed($displayed)
+    public function setDisplayed($displayed): void
     {
         $this->displayed = $displayed;
     }
@@ -154,7 +156,7 @@ class BlockDefinition
     /**
      * @param string $after
      */
-    public function setAfter($after)
+    public function setAfter($after): void
     {
         $this->after = $after;
     }
@@ -162,7 +164,7 @@ class BlockDefinition
     /**
      * @param string $before
      */
-    public function setBefore($before)
+    public function setBefore($before): void
     {
         $this->before = $before;
     }

@@ -11,13 +11,14 @@
 namespace CleverAge\LayoutBundle\Block;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Templating\EngineInterface;
 
 /**
  * Generic block to render a twig template without any business logic
  */
-class SimpleBlock implements BlockInterface, TwigAwareBlockInterface
+class SimpleBlock implements BlockInterface, RendererAwareBlockInterface
 {
-    /** @var \Twig_Environment */
+    /** @var EngineInterface */
     protected $twig;
 
     /** @var string */
@@ -37,17 +38,17 @@ class SimpleBlock implements BlockInterface, TwigAwareBlockInterface
     }
 
     /**
-     * @param \Twig_Environment $twig
+     * @param EngineInterface $renderer
      */
-    public function setTwig(\Twig_Environment $twig)
+    public function setRenderer(EngineInterface $renderer): void
     {
-        $this->twig = $twig;
+        $this->twig = $renderer;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function initialize(Request $request, array $parameters = [])
+    public function initialize(Request $request, array $parameters = []): void
     {
         // Do nothing by default
     }
@@ -56,8 +57,6 @@ class SimpleBlock implements BlockInterface, TwigAwareBlockInterface
      * Render the twig template associated to the block, and return the HTML
      *
      * @param array $parameters
-     *
-     * @throws \Twig_Error
      *
      * @return string
      */
@@ -77,5 +76,4 @@ class SimpleBlock implements BlockInterface, TwigAwareBlockInterface
     {
         return $this->code;
     }
-
 }

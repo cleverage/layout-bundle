@@ -10,7 +10,6 @@
 
 namespace CleverAge\LayoutBundle\Exception;
 
-
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 
 /**
@@ -20,8 +19,9 @@ class UnsortableLayoutException extends InvalidConfigurationException
 {
     /**
      * @param string $slotCode
-     * @param array $currentChildren
-     * @param array $unsortedChildren
+     * @param array  $currentChildren
+     * @param array  $unsortedChildren
+     *
      * @return UnsortableLayoutException
      */
     public static function create(
@@ -29,10 +29,10 @@ class UnsortableLayoutException extends InvalidConfigurationException
         array $currentChildren,
         array $unsortedChildren
     ): UnsortableLayoutException {
-        $currentCount = count($currentChildren);
-        $unsortableCount = count($unsortedChildren);
+        $currentCount = \count($currentChildren);
+        $unsortableCount = \count($unsortedChildren);
 
-        return new UnsortableLayoutException(
+        return new self(
             "Unable to sort {$unsortableCount}/{$currentCount} children inside slot {$slotCode}"
         );
     }

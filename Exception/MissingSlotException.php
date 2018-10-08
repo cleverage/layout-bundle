@@ -20,8 +20,8 @@ class MissingSlotException extends MissingException
      *
      * @return MissingSlotException
      */
-    public static function create(string $slotCode) : MissingSlotException
+    public static function create(string $slotCode): MissingSlotException
     {
-        return new MissingSlotException("Missing slot '{$slotCode}'");
+        return new self("Missing slot '{$slotCode}'");
     }
 }

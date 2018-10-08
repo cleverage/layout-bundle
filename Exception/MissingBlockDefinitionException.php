@@ -20,8 +20,8 @@ class MissingBlockDefinitionException extends MissingException
      *
      * @return MissingBlockDefinitionException
      */
-    public static function create(string $blockDefinitionCode) : MissingBlockDefinitionException
+    public static function create(string $blockDefinitionCode): MissingBlockDefinitionException
     {
-        return new MissingBlockDefinitionException("Missing block definition '{$blockDefinitionCode}'");
+        return new self("Missing block definition '{$blockDefinitionCode}'");
     }
 }

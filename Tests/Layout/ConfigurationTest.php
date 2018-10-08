@@ -21,11 +21,10 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
  */
 class ConfigurationTest extends TestCase
 {
-
     /** @var  ContainerBuilder */
     protected $container;
 
-    const CONFIG_SAMPLE_LAYOUTS = [
+    public const CONFIG_SAMPLE_LAYOUTS = [
         'clever_age_layout' => [
             'layouts' => [
                 'empty_layout' => [
@@ -93,19 +92,22 @@ class ConfigurationTest extends TestCase
         $this->container = $this->getContainerBuilder();
     }
 
-
     /**
      * Test the default behavior (without defined layout)
+     *
+     * @throws \Exception
      */
-    public function testDefault()
+    public function testDefault(): void: void
     {
         self::assertCount(0, $this->getLayoutRegistry()->getLayouts());
     }
 
     /**
      * Test the creation of an empty Layout
+     *
+     * @throws \Exception
      */
-    public function testEmptyLayout()
+    public function testEmptyLayout(): void: void
     {
         $layout = $this->getSampleLayout('empty_layout');
 
@@ -115,8 +117,10 @@ class ConfigurationTest extends TestCase
 
     /**
      * Test a simple layout (without inheritance)
+     *
+     * @throws \Exception
      */
-    public function testSimpleLayout()
+    public function testSimpleLayout(): void: void
     {
         $layout = $this->getSampleLayout('simple_layout');
         $mainSlot = $layout->getSlot('main');
@@ -131,8 +135,10 @@ class ConfigurationTest extends TestCase
 
     /**
      * Test inheritance between layouts
+     *
+     * @throws \Exception
      */
-    public function testInheritance()
+    public function testInheritance(): void: void
     {
         $layout = $this->getSampleLayout('inheriting_layout');
         self::assertEquals('template2.html.twig', $layout->getTemplate());
@@ -149,8 +155,10 @@ class ConfigurationTest extends TestCase
 
     /**
      * Test relative, chained and absolute positioning
+     *
+     * @throws \Exception
      */
-    public function testPositioning()
+    public function testPositioning(): void: void
     {
         $layout = $this->getSampleLayout('inheriting_layout');
         $mainSlot = $layout->getSlot('main');
@@ -175,7 +183,11 @@ class ConfigurationTest extends TestCase
 
     /**
      * Load and get one the sample layout
+     *
      * @param string $code
+     *
+     * @throws \Exception
+     *
      * @return LayoutInterface
      */
     protected function getSampleLayout(string $code): LayoutInterface
@@ -187,27 +199,35 @@ class ConfigurationTest extends TestCase
 
     /**
      * Get the full layout registry
+     *
      * @param array $config
+     *
+     * @throws \Exception
+     *
      * @return LayoutRegistry
      */
     protected function getLayoutRegistry(array $config = []): LayoutRegistry
     {
         $this->loadConfiguration($config);
 
-        return $this->container->get('clever_age_layout.registry.layout');
+        return $this->container->get(LayoutRegistry::class);
     }
 
     /**
      * Loads the given configuration using the Extension
+     *
      * @param array $config
+     *
+     * @throws \Exception
      */
-    protected function loadConfiguration(array $config = [])
+    protected function loadConfiguration(array $config = []): void: void
     {
         $this->getExtension()->load($config, $this->container);
     }
 
     /**
      * Generates a new instance of the bundle extension
+     *
      * @return CleverAgeLayoutExtension
      */
     protected function getExtension(): CleverAgeLayoutExtension
@@ -217,6 +237,7 @@ class ConfigurationTest extends TestCase
 
     /**
      * Generates a new instance of the container builder
+     *
      * @return ContainerBuilder
      */
     protected function getContainerBuilder(): ContainerBuilder

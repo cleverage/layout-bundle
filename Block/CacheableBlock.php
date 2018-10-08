@@ -11,6 +11,7 @@
 namespace CleverAge\LayoutBundle\Block;
 
 use Cocur\Slugify\Slugify;
+use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\Cache\Adapter\AdapterInterface;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -93,9 +94,9 @@ class CacheableBlock extends SimpleBlock implements CacheAdapterAwareBlockInterf
     /**
      * By default, the block is fully cached if the request and parameters does not change
      *
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
-    final public function initialize(Request $request, array $parameters = [])
+    final public function initialize(Request $request, array $parameters = []): void
     {
         $this->addTag('BLOCK_'.$this->getCode());
         $this->handleRequest($request, $parameters);
@@ -103,7 +104,7 @@ class CacheableBlock extends SimpleBlock implements CacheAdapterAwareBlockInterf
         if (!$this->enableCache || ($parameters['skip_init_cache'] ?? $this->forceInit)) {
             $this->handleInitialization($request, $parameters);
 
-            return null;
+            return;
         }
 
         $this->cacheKeys[] = $this->getCacheKey();
@@ -127,9 +128,9 @@ class CacheableBlock extends SimpleBlock implements CacheAdapterAwareBlockInterf
 
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
+     *
      * @throws \Symfony\Component\Cache\Exception\InvalidArgumentException
-     * @throws \Psr\Cache\InvalidArgumentException
      * @throws \UnexpectedValueException
      */
     final public function render(array $parameters = []): string
@@ -148,23 +149,29 @@ class CacheableBlock extends SimpleBlock implements CacheAdapterAwareBlockInterf
         // it will be useful for init caching & still correct invalidation
         $html = null;
         foreach ($this->cacheKeys as $cacheKey) {
-            $result = $this->cacheAdapter->getItem($cacheKey);
-            if ($result->isHit()) {
-                return $result->get();
+            try {
+                $result = $this->cacheAdapter->getItem($cacheKey);
+                if ($result->isHit()) {
+                    return $result->get();
+                }
+            } catch (InvalidArgumentException $e) {
+                $result = null;
             }
-            if (!isset($html)) {
+            if (null === $html) {
                 $html = $this->handleRendering($parameters);
             }
-            $result->set($html);
-            $result->tag($this->cacheTags);
-            if (isset($this->cacheLifetime)) {
-                $result->expiresAfter($this->cacheLifetime);
-            }
-            if (isset($this->cacheExpiresAt)) {
-                $result->expiresAt($this->cacheExpiresAt);
-            }
+            if ($result) {
+                $result->set($html);
+                $result->tag($this->cacheTags);
+                if ($this->cacheLifetime) {
+                    $result->expiresAfter($this->cacheLifetime);
+                }
+                if ($this->cacheExpiresAt) {
+                    $result->expiresAt($this->cacheExpiresAt);
+                }
 
-            $this->cacheAdapter->save($result);
+                $this->cacheAdapter->save($result);
+            }
         }
 
         return $html;
@@ -176,7 +183,6 @@ class CacheableBlock extends SimpleBlock implements CacheAdapterAwareBlockInterf
      * @param array $parameters
      *
      * @return string
-     * @throws \Twig_Error
      */
     public function handleRendering(array $parameters = []): string
     {
@@ -187,22 +193,23 @@ class CacheableBlock extends SimpleBlock implements CacheAdapterAwareBlockInterf
      * Recursively check if cache is available for a block and its children block
      *
      * @return bool
-     * @throws \Psr\Cache\InvalidArgumentException
      */
     public function hasRecursiveCache(): bool
     {
         $key = $this->getCacheKey();
 
         if ($key) {
-            $result = $this->cacheAdapter->getItem($key);
+            try {
+                $result = $this->cacheAdapter->getItem($key);
+                if ($result->isHit()) {
+                    $childrenCache = true;
+                    foreach ($this->cacheDependencies as $cacheDependency) {
+                        $childrenCache = $childrenCache && $cacheDependency->hasRecursiveCache();
+                    }
 
-            if ($result->isHit()) {
-                $childrenCache = true;
-                foreach ($this->cacheDependencies as $cacheDependency) {
-                    $childrenCache = $childrenCache && $cacheDependency->hasRecursiveCache();
+                    return $childrenCache;
                 }
-
-                return $childrenCache;
+            } catch (InvalidArgumentException $e) {
             }
         }
 
@@ -212,7 +219,7 @@ class CacheableBlock extends SimpleBlock implements CacheAdapterAwareBlockInterf
     /**
      * @param AdapterInterface $cacheAdapter
      */
-    public function setCacheAdapter(AdapterInterface $cacheAdapter)
+    public function setCacheAdapter(AdapterInterface $cacheAdapter): void
     {
         $this->cacheAdapter = $cacheAdapter;
     }
@@ -220,7 +227,7 @@ class CacheableBlock extends SimpleBlock implements CacheAdapterAwareBlockInterf
     /**
      * @param bool $enableCache
      */
-    public function setEnableCache(bool $enableCache)
+    public function setEnableCache(bool $enableCache): void
     {
         $this->enableCache = $enableCache;
     }
@@ -232,7 +239,7 @@ class CacheableBlock extends SimpleBlock implements CacheAdapterAwareBlockInterf
      */
     protected function addCacheDependency(BlockInterface $block)
     {
-        if (!$block instanceof CacheableBlock) {
+        if (!$block instanceof self) {
             throw new \UnexpectedValueException('A dependent block must be cacheable');
         }
 
@@ -248,7 +255,7 @@ class CacheableBlock extends SimpleBlock implements CacheAdapterAwareBlockInterf
     protected function addTag(string $tagName)
     {
         $tagName = $this->slugifier->slugify($tagName);
-        if (!in_array($tagName, $this->cacheTags, true)) {
+        if (!\in_array($tagName, $this->cacheTags, true)) {
             $this->cacheTags[] = $tagName;
         }
     }

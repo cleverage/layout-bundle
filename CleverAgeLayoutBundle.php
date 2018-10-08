@@ -10,10 +10,15 @@
 
 namespace CleverAge\LayoutBundle;
 
-use CleverAge\LayoutBundle\DependencyInjection\Compiler\GenericCompilerPass;
+use CleverAge\LayoutBundle\Block\BlockRegistry;
+use Sidus\BaseBundle\DependencyInjection\Compiler\GenericCompilerPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
+use CleverAge\LayoutBundle\Layout\LayoutRegistry;
 
+/**
+ * Class CleverAgeLayoutBundle
+ */
 class CleverAgeLayoutBundle extends Bundle
 {
     /**
@@ -21,17 +26,21 @@ class CleverAgeLayoutBundle extends Bundle
      *
      * @param ContainerBuilder $container
      */
-    public function build(ContainerBuilder $container)
+    public function build(ContainerBuilder $container): void
     {
-        $container->addCompilerPass(new GenericCompilerPass(
-            'clever_age_layout.registry.block',
-            'clever.block',
-            'addBlock'
-        ));
-        $container->addCompilerPass(new GenericCompilerPass(
-            'clever_age_layout.registry.layout',
-            'clever.layout',
-            'addLayout'
-        ));
+        $container->addCompilerPass(
+            new GenericCompilerPass(
+                BlockRegistry::class,
+                'clever.block',
+                'addBlock'
+            )
+        );
+        $container->addCompilerPass(
+            new GenericCompilerPass(
+                LayoutRegistry::class,
+                'clever.layout',
+                'addLayout'
+            )
+        );
     }
 }

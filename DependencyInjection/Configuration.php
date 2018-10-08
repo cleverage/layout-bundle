@@ -1,4 +1,6 @@
-<?php
+<?php /** @noinspection PhpUndefinedMethodInspection */
+/** @noinspection NullPointerExceptionInspection */
+
 /*
  * This file is part of the CleverAge/LayoutBundle package.
  *
@@ -39,7 +41,7 @@ class Configuration implements ConfigurationInterface
      *
      * @throws \RuntimeException
      */
-    public function getConfigTreeBuilder()
+    public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root($this->root);
@@ -72,7 +74,7 @@ class Configuration implements ConfigurationInterface
      *
      * @return NodeDefinition
      */
-    protected function getLayoutsConfigTreeBuilder()
+    protected function getLayoutsConfigTreeBuilder(): NodeDefinition
     {
         $builder = new TreeBuilder();
         $node = $builder->root('layouts');
@@ -95,7 +97,7 @@ class Configuration implements ConfigurationInterface
     /**
      * @param NodeBuilder $layoutDefinition
      */
-    protected function appendLayoutDefinition(NodeBuilder $layoutDefinition)
+    protected function appendLayoutDefinition(NodeBuilder $layoutDefinition): void
     {
         /** @var ArrayNodeDefinition $slotArrayNodeDefinition */
         $slotArrayNodeDefinition = $layoutDefinition
@@ -123,7 +125,7 @@ class Configuration implements ConfigurationInterface
     /**
      * @param NodeBuilder $blockDefinition
      */
-    protected function appendBlockDefinition(NodeBuilder $blockDefinition)
+    protected function appendBlockDefinition(NodeBuilder $blockDefinition): void
     {
         $blockDefinition
             ->scalarNode('block_code')->end()

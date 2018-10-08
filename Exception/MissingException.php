@@ -16,5 +16,4 @@ namespace CleverAge\LayoutBundle\Exception;
  */
 class MissingException extends \InvalidArgumentException
 {
-
 }

@@ -45,11 +45,11 @@ interface LayoutInterface
     public function getSlot(string $slotCode): Slot;
 
     /**
-     * @param string[] ...$slotCodes
+     * @param string[] $slotCodes
      *
      * @return int
      */
-    public function getSlotBlockCount(string ...$slotCodes);
+    public function getSlotBlockCount(array $slotCodes): int;
 
     /**
      * @return array

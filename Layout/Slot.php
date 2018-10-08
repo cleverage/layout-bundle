@@ -28,7 +28,6 @@ class Slot
     protected $sortedBlockDefinitions;
 
     /**
-     * Slot constructor.
      * @param string $code
      */
     public function __construct($code)
@@ -39,7 +38,7 @@ class Slot
     /**
      * @return string
      */
-    public function getCode()
+    public function getCode(): string
     {
         return $this->code;
     }
@@ -47,9 +46,10 @@ class Slot
 
     /**
      * Add a block to a slot and invalid cached sort
+     *
      * @param BlockDefinition $blockDefinition
      */
-    public function addBlockDefinition(BlockDefinition $blockDefinition)
+    public function addBlockDefinition(BlockDefinition $blockDefinition): void
     {
         $this->blockDefinitions[$blockDefinition->getCode()] = $blockDefinition;
         $this->sortedBlockDefinitions = null;
@@ -57,11 +57,13 @@ class Slot
 
     /**
      * Sort and get the list of children blocks
+     *
+     *
      * @return BlockDefinition[]
      */
     public function getBlockDefinitions(): array
     {
-        if (!isset($this->sortedBlockDefinitions)) {
+        if (null === $this->sortedBlockDefinitions) {
             $this->sortedBlockDefinitions = $this->sortBlockDefinitions($this->blockDefinitions);
         }
 
@@ -96,9 +98,8 @@ class Slot
 
     /**
      * Sort the blocks according to the after/before positioning
-     * @param BlockDefinition[] $blockDefinitions
      *
-     * @throws \Exception
+     * @param BlockDefinition[] $blockDefinitions
      *
      * @return BlockDefinition[]
      */
@@ -121,17 +122,17 @@ class Slot
         }
 
         // Due to unknown initial order, we must try to sort until success or stalled progress
-        while (count($childrenToSort) > 0) {
+        while (\count($childrenToSort) > 0) {
             /** @var BlockDefinition[] $sortedChildren */
             $sortedChildren = [];
 
             // Try to sort every child one by one
             foreach ($childrenToSort as $definition) {
-                if ($definition->getAfter() === '*') {
+                if ('*' === $definition->getAfter()) {
                     // Absolute after sorting
                     $orderedChildren[$definition->getCode()] = $definition;
                     $sortedChildren[$definition->getCode()] = $definition;
-                } elseif ($definition->getBefore() === '*') {
+                } elseif ('*' === $definition->getBefore()) {
                     // Absolute before sorting
                     $orderedChildren = [$definition->getCode() => $definition] + $orderedChildren;
                     $sortedChildren[$definition->getCode()] = $definition;
@@ -140,14 +141,14 @@ class Slot
                     $relativeDefinitionCode = !empty($definition->getAfter()) ? $definition->getAfter(
                     ) : $definition->getBefore();
                     $position = array_search($relativeDefinitionCode, array_keys($orderedChildren), true);
-                    if ($position !== false) {
+                    if (false !== $position) {
                         /** @noinspection NotOptimalIfConditionsInspection */
                         if ($definition->getAfter()) {
-                            $position++;
+                            ++$position;
                         }
 
-                        $before = array_slice($orderedChildren, 0, $position);
-                        $after = array_slice($orderedChildren, $position);
+                        $before = \array_slice($orderedChildren, 0, $position);
+                        $after = \array_slice($orderedChildren, $position);
                         $orderedChildren = $before + [$definition->getCode() => $definition] + $after;
                         $sortedChildren[$definition->getCode()] = $definition;
                     }
@@ -155,7 +156,7 @@ class Slot
             }
 
             // If the progress has stalled, throw an error
-            if (!count($sortedChildren)) {
+            if (!\count($sortedChildren)) {
                 throw UnsortableLayoutException::create($this->code, $blockDefinitions, $childrenToSort);
             }
 

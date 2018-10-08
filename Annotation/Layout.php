@@ -17,25 +17,31 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ConfigurationAnnotation;
  */
 class Layout extends ConfigurationAnnotation
 {
-    /**
-     * Layout name
-     *
-     * @var string
-     */
-    protected $name = '';
+    /** @var string|null */
+    protected $name;
 
     /**
-     * @return string
+     * @param array $values
      */
-    public function getName(): string
+    public function __construct(array $values)
+    {
+        $this->name = $values['value'] ?? null;
+        unset($values['value']);
+        parent::__construct($values);
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getName(): ?string
     {
         return $this->name;
     }
 
     /**
-     * @param string $name
+     * @param string|null $name
      */
-    public function setName(string $name)
+    public function setName(string $name = null): void
     {
         $this->name = $name;
     }
@@ -43,7 +49,7 @@ class Layout extends ConfigurationAnnotation
     /**
      * {@inheritdoc}
      */
-    public function getAliasName()
+    public function getAliasName(): string
     {
         return 'layout';
     }
@@ -51,7 +57,7 @@ class Layout extends ConfigurationAnnotation
     /**
      * {@inheritdoc}
      */
-    public function allowArray()
+    public function allowArray(): bool
     {
         return false;
     }

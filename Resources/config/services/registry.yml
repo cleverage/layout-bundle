@@ -1,8 +1,8 @@
 services:
-    clever_age_layout.registry.block:
-        class: CleverAge\LayoutBundle\Block\BlockRegistry
+    CleverAge\LayoutBundle\Block\BlockRegistry:
+        public: false
+        autowire: true
 
-    clever_age_layout.registry.layout:
-        class: CleverAge\LayoutBundle\Layout\LayoutRegistry
-        arguments:
-            - '@clever_age_layout.factory.layout'
+    CleverAge\LayoutBundle\Layout\LayoutRegistry:
+        public: false
+        autowire: true

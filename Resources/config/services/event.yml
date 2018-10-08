@@ -1,6 +1,6 @@
 services:
-    clever_age.layout.event.layout_listener:
-        class: CleverAge\LayoutBundle\EventListener\LayoutListener
-        arguments: ['@service_container']
+    CleverAge\LayoutBundle\EventListener\LayoutListener:
+        autowire: true
+        public: false
         tags:
-            - { name: kernel.event_subscriber }
+        - { name: kernel.event_subscriber }

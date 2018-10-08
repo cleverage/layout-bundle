@@ -17,10 +17,11 @@ class DuplicatedBlockException extends \InvalidArgumentException
 {
     /**
      * @param string $blockCode
+     *
      * @return DuplicatedBlockException
      */
     public static function create(string $blockCode): DuplicatedBlockException
     {
-        return new DuplicatedBlockException("The code {$blockCode} is already used");
+        return new self("The code {$blockCode} is already used");
     }
 }

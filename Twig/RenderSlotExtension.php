@@ -19,20 +19,17 @@ use CleverAge\LayoutBundle\Layout\Layout;
  * Render a slot using layout configuration
  * Optionally wraps the HTML into a debug div
  */
-class RenderSlotExtension extends \Twig_Extension implements \Twig_Extension_InitRuntimeInterface
+class RenderSlotExtension extends \Twig_Extension
 {
-
     /** @var  \Twig_Environment */
-    protected $twigEnv;
+    protected $twig;
 
     /**
-     * Get the reference to Twig environment
-     *
-     * @param \Twig_Environment $environment
+     * @param \Twig_Environment $twig
      */
-    public function initRuntime(\Twig_Environment $environment)
+    public function __construct(\Twig_Environment $twig)
     {
-        $this->twigEnv = $environment;
+        $this->twig = $twig;
     }
 
     /**
@@ -40,7 +37,7 @@ class RenderSlotExtension extends \Twig_Extension implements \Twig_Extension_Ini
      *
      * @return array
      */
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return [
             new \Twig_SimpleFunction('render_slot', [$this, 'renderSlot'], ['is_safe' => ['html']]),
@@ -68,16 +65,16 @@ class RenderSlotExtension extends \Twig_Extension implements \Twig_Extension_Ini
     }
 
     /**
-     * @param Layout $layout
-     * @param string[] ...$slotCodes
+     * @param Layout          $layout
+     * @param string|string[] $slotCodes
      *
      * @throws MissingException
      *
      * @return bool
      */
-    public function hasBlocks(Layout $layout, string ...$slotCodes)
+    public function hasBlocks(Layout $layout, $slotCodes): bool
     {
-        return $layout->getSlotBlockCount(...$slotCodes) > 0;
+        return $layout->getSlotBlockCount((array) $slotCodes) > 0;
     }
 
     /**
@@ -108,7 +105,7 @@ class RenderSlotExtension extends \Twig_Extension implements \Twig_Extension_Ini
     /**
      * @param Layout $layout
      * @param string $html
-     * @param array $options
+     * @param array  $options
      *
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
@@ -119,7 +116,7 @@ class RenderSlotExtension extends \Twig_Extension implements \Twig_Extension_Ini
     protected function wrapHtml(Layout $layout, string $html, array $options): string
     {
         if ($layout->getDebugMode()) {
-            $html = $this->twigEnv->render(
+            $html = $this->twig->render(
                 'CleverAgeLayoutBundle::debug.html.twig',
                 [
                     'content' => $html,
@@ -132,6 +129,4 @@ class RenderSlotExtension extends \Twig_Extension implements \Twig_Extension_Ini
 
         return $html;
     }
-
-
 }

@@ -20,8 +20,8 @@ class MissingLayoutException extends MissingException
      *
      * @return MissingLayoutException
      */
-    public static function create(string $layoutCode) : MissingLayoutException
+    public static function create(string $layoutCode): MissingLayoutException
     {
-        return new MissingLayoutException("Missing layout '{$layoutCode}'");
+        return new self("Missing layout '{$layoutCode}'");
     }
 }

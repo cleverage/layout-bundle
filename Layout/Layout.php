@@ -1,18 +1,9 @@
 <?php
-/*
- * This file is part of the CleverAge/LayoutBundle package.
- *
- * Copyright (c) 2015-2018 Clever-Age
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
 
 namespace CleverAge\LayoutBundle\Layout;
 
 use CleverAge\LayoutBundle\Block\BlockInterface;
 use CleverAge\LayoutBundle\Block\BlockRegistry;
-use CleverAge\LayoutBundle\Exception\MissingException;
 use CleverAge\LayoutBundle\Exception\MissingSlotException;
 use CleverAge\LayoutBundle\Exception\MissingBlockException;
 use Symfony\Component\HttpFoundation\Request;
@@ -134,10 +125,6 @@ class Layout implements LayoutInterface
     /**
      * @param string $slotCode
      *
-     * @throws MissingSlotException
-     * @throws MissingBlockException
-     * @throws \RuntimeException
-     *
      * @return array
      */
     public function getBlocksHtml(string $slotCode): array
@@ -197,12 +184,11 @@ class Layout implements LayoutInterface
      *        same block code
      * TODO : prevent double init
      *
-     * @throws MissingException
-     * @throws \RuntimeException
+     *
      *
      * {@inheritdoc}
      */
-    public function initializeBlocks(Request $request)
+    public function initializeBlocks(Request $request): void
     {
         if ($this->stopwatch) {
             $this->stopwatch->start('layout.initialization');
@@ -244,17 +230,14 @@ class Layout implements LayoutInterface
 
     /**
      * {@inheritdoc}
-     *
-     * @throws MissingSlotException
-     * @throws MissingBlockException
      */
-    public function getSlotBlockCount(string ...$slotCodes)
+    public function getSlotBlockCount(array $slotCodes): int
     {
         $count = 0;
         foreach ($slotCodes as $slotCode) {
             foreach ($this->getBlocksHtml($slotCode) as $blockHtml) {
                 if (!empty(trim($blockHtml))) {
-                    $count++;
+                    ++$count;
                 }
             }
         }
@@ -268,13 +251,13 @@ class Layout implements LayoutInterface
      */
     public function getDebugMode(): string
     {
-        return $this->debugMode ? $this->debugMode : '';
+        return $this->debugMode ?: '';
     }
 
     /**
      * @param string $debugMode
      */
-    public function setDebugMode(string $debugMode)
+    public function setDebugMode(string $debugMode): void
     {
         $this->debugMode = $debugMode;
     }
@@ -282,7 +265,7 @@ class Layout implements LayoutInterface
     /**
      * @param Stopwatch $stopwatch
      */
-    public function setStopwatch(Stopwatch $stopwatch)
+    public function setStopwatch(Stopwatch $stopwatch): void
     {
         $this->stopwatch = $stopwatch;
     }

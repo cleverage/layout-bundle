@@ -20,8 +20,8 @@ class MissingBlockException extends MissingException
      *
      * @return MissingBlockException
      */
-    public static function create(string $blockCode) : MissingBlockException
+    public static function create(string $blockCode): MissingBlockException
     {
-        return new MissingBlockException("Missing block '{$blockCode}'");
+        return new self("Missing block '{$blockCode}'");
     }
 }
