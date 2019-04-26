@@ -1,0 +1,18 @@
+services:
+    CleverAge\LayoutBundle\Debug\DebugBlockRenderer:
+        decorates: CleverAge\LayoutBundle\Templating\BlockRenderer
+        autowire: true
+        arguments:
+            $baseBlockRenderer: '@CleverAge\LayoutBundle\Debug\DebugBlockRenderer.inner'
+
+    CleverAge\LayoutBundle\Debug\DebugSlotRenderer:
+        decorates: CleverAge\LayoutBundle\Templating\SlotRenderer
+        autowire: true
+        arguments:
+            $baseSlotRenderer: '@CleverAge\LayoutBundle\Debug\DebugSlotRenderer.inner'
+
+    CleverAge\LayoutBundle\Debug\DebugBlockInitializer:
+        autowire: true
+        public: false
+        tags:
+            - { name: kernel.event_subscriber }

@@ -18,7 +18,6 @@ use Symfony\Component\HttpFoundation\Request;
  */
 interface BlockInterface
 {
-
     /**
      * Set the block data depending on the current request
      *

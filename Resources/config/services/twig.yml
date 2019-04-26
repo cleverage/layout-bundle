@@ -3,4 +3,4 @@ services:
         public: false
         autowire: true
         tags:
-        - { name: twig.extension }
+            - { name: twig.extension }

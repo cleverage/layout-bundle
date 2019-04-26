@@ -11,7 +11,6 @@
 namespace CleverAge\LayoutBundle\Layout;
 
 use CleverAge\LayoutBundle\Exception\MissingSlotException;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Defines how layouts are rendered and holds the configuration of a defined layout
@@ -29,11 +28,9 @@ interface LayoutInterface
     public function getTemplate(): string;
 
     /**
-     * @param string $slotCode
-     *
-     * @return array
+     * @return Slot[]
      */
-    public function getBlocksHtml(string $slotCode): array;
+    public function getSlots(): array;
 
     /**
      * @param string $slotCode
@@ -45,19 +42,7 @@ interface LayoutInterface
     public function getSlot(string $slotCode): Slot;
 
     /**
-     * @param string[] $slotCodes
-     *
-     * @return int
-     */
-    public function getSlotBlockCount(array $slotCodes): int;
-
-    /**
      * @return array
      */
     public function getGlobalParameters(): array;
-
-    /**
-     * @param Request $request
-     */
-    public function initializeBlocks(Request $request);
 }

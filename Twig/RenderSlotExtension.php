@@ -13,23 +13,37 @@ namespace CleverAge\LayoutBundle\Twig;
 use CleverAge\LayoutBundle\Exception\MissingBlockException;
 use CleverAge\LayoutBundle\Exception\MissingException;
 use CleverAge\LayoutBundle\Exception\MissingSlotException;
-use CleverAge\LayoutBundle\Layout\Layout;
+use CleverAge\LayoutBundle\Layout\LayoutInterface;
+use CleverAge\LayoutBundle\Templating\SlotRendererInterface;
+use Twig\Environment;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
 
 /**
  * Render a slot using layout configuration
  * Optionally wraps the HTML into a debug div
  */
-class RenderSlotExtension extends \Twig_Extension
+class RenderSlotExtension extends AbstractExtension
 {
-    /** @var  \Twig_Environment */
+    /** @var Environment */
     protected $twig;
 
+    /** @var SlotRendererInterface */
+    protected $slotRenderer;
+
+    /** @var bool */
+    protected $debugMode = false;
+
     /**
-     * @param \Twig_Environment $twig
+     * @param Environment           $twig
+     * @param SlotRendererInterface $slotRenderer
+     * @param bool                  $debugMode
      */
-    public function __construct(\Twig_Environment $twig)
+    public function __construct(Environment $twig, SlotRendererInterface $slotRenderer, bool $debugMode = false)
     {
         $this->twig = $twig;
+        $this->slotRenderer = $slotRenderer;
+        $this->debugMode = $debugMode;
     }
 
     /**
@@ -40,48 +54,46 @@ class RenderSlotExtension extends \Twig_Extension
     public function getFunctions(): array
     {
         return [
-            new \Twig_SimpleFunction('render_slot', [$this, 'renderSlot'], ['is_safe' => ['html']]),
-            new \Twig_SimpleFunction('has_blocks', [$this, 'hasBlocks']),
+            new TwigFunction('render_slot', [$this, 'renderSlot'], ['is_safe' => ['html']]),
+            new TwigFunction('has_blocks', [$this, 'hasBlocks']),
         ];
     }
 
     /**
-     * @param Layout $layout
-     * @param string $slotCode
-     *
-     * @throws MissingSlotException
-     * @throws MissingBlockException
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
+     * @param LayoutInterface $layout
+     * @param string          $slotCode
      *
      * @return string
      */
-    public function renderSlot(Layout $layout, string $slotCode): string
+    public function renderSlot(LayoutInterface $layout, string $slotCode): string
     {
-        $slotHtml = $this->getSlotHtml($layout, $slotCode);
-
-        return $this->wrapHtml($layout, $slotHtml, ['type' => 'slot', 'code' => $slotCode]);
+        return $this->wrapHtml($this->getSlotHtml($layout, $slotCode), 'slot', $slotCode);
     }
 
     /**
-     * @param Layout          $layout
+     * @param LayoutInterface $layout
      * @param string|string[] $slotCodes
      *
      * @throws MissingException
      *
      * @return bool
      */
-    public function hasBlocks(Layout $layout, $slotCodes): bool
+    public function hasBlocks(LayoutInterface $layout, $slotCodes): bool
     {
-        return $layout->getSlotBlockCount((array) $slotCodes) > 0;
+        foreach ((array) $slotCodes as $slotCode) {
+            if (!$this->slotRenderer->isEmptySlot($layout, $slotCode)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
      * Alias to the renderSlot method of the layout manager
      *
-     * @param Layout $layout
-     * @param string $slotCode
+     * @param LayoutInterface $layout
+     * @param string          $slotCode
      *
      * @throws MissingSlotException
      * @throws MissingBlockException
@@ -91,38 +103,34 @@ class RenderSlotExtension extends \Twig_Extension
      *
      * @return string
      */
-    public function getSlotHtml(Layout $layout, string $slotCode): string
+    public function getSlotHtml(LayoutInterface $layout, string $slotCode): string
     {
-        $blocksHtml = $layout->getBlocksHtml($slotCode);
+        $blocksHtml = $this->slotRenderer->renderSlot($layout, $slotCode);
         $html = '';
         foreach ($blocksHtml as $code => $blockHtml) {
-            $html .= $this->wrapHtml($layout, $blockHtml, ['type' => 'block', 'code' => $code]);
+            $html .= $this->wrapHtml($blockHtml, 'block', $code);
         }
 
         return $html;
     }
 
     /**
-     * @param Layout $layout
      * @param string $html
-     * @param array  $options
-     *
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
+     * @param string $type
+     * @param string $code
      *
      * @return string
      */
-    protected function wrapHtml(Layout $layout, string $html, array $options): string
+    protected function wrapHtml(string $html, string $type, string $code): string
     {
-        if ($layout->getDebugMode()) {
+        if ($this->debugMode) {
             $html = $this->twig->render(
                 'CleverAgeLayoutBundle::debug.html.twig',
                 [
                     'content' => $html,
-                    'type' => $options['type'],
-                    'code' => $options['code'],
-                    'debug_mode' => $layout->getDebugMode(),
+                    'type' => $type,
+                    'code' => $code,
+                    'debug_mode' => 1,
                 ]
             );
         }

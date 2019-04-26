@@ -1,6 +1,36 @@
 services:
-    CleverAge\LayoutBundle\EventListener\LayoutListener:
+    CleverAge\LayoutBundle\Event\Listener\LayoutResolverListener:
         autowire: true
         public: false
         tags:
-        - { name: kernel.event_subscriber }
+            - { name: kernel.event_listener, event: kernel.controller, priority: -128 }
+
+    CleverAge\LayoutBundle\Event\Listener\LayoutExceptionListener:
+        autowire: true
+        public: false
+        tags:
+            - { name: kernel.event_listener, event: kernel.exception }
+
+    CleverAge\LayoutBundle\Event\Listener\LayoutViewListener:
+        autowire: true
+        public: false
+        tags:
+            - { name: kernel.event_listener, event: kernel.view }
+
+    CleverAge\LayoutBundle\Event\Listener\LayoutInitializer:
+        autowire: true
+        public: false
+        tags:
+            - { name: kernel.event_listener, event: layout.initialize }
+
+    CleverAge\LayoutBundle\Event\Listener\SlotInitializer:
+        autowire: true
+        public: false
+        tags:
+            - { name: kernel.event_listener, event: slot.initialize }
+
+    CleverAge\LayoutBundle\Event\Listener\BlockInitializer:
+        autowire: true
+        public: false
+        tags:
+            - { name: kernel.event_listener, event: block.initialize }

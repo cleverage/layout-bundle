@@ -10,7 +10,7 @@
 
 namespace CleverAge\LayoutBundle\Layout;
 
-use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\PropertyAccess\Exception\ExceptionInterface;
 
 /**
  * Represents the positioning of a block inside a layout's slot
@@ -39,14 +39,21 @@ class BlockDefinition
      * @param string $code
      * @param array  $definition
      *
-     * @throws \Symfony\Component\PropertyAccess\Exception\ExceptionInterface
+     * @throws ExceptionInterface
      */
     public function __construct(string $code, array $definition = [])
     {
         $this->code = $code;
-        $propertyAccessor = PropertyAccess::createPropertyAccessor();
+        $refl = new \ReflectionClass($this);
         foreach ($definition as $key => $value) {
-            $propertyAccessor->setValue($this, $key, $value);
+            $key = \lcfirst(\str_replace(' ', '', \ucwords(\str_replace('_', ' ', $key))));
+            if (!$refl->hasProperty($key)) {
+                throw new \UnexpectedValueException(
+                    "The block definition {$this->code} has an invalid configuration for option '{$key}'"
+                );
+            }
+            /** @noinspection PhpVariableVariableInspection */
+            $this->$key = $value;
         }
     }
 

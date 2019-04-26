@@ -12,7 +12,7 @@ namespace CleverAge\LayoutBundle\Tests\Layout;
 
 use CleverAge\LayoutBundle\DependencyInjection\CleverAgeLayoutExtension;
 use CleverAge\LayoutBundle\Layout\LayoutInterface;
-use CleverAge\LayoutBundle\Layout\LayoutRegistry;
+use CleverAge\LayoutBundle\Registry\LayoutRegistry;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
@@ -97,7 +97,7 @@ class ConfigurationTest extends TestCase
      *
      * @throws \Exception
      */
-    public function testDefault(): void: void
+    public function testDefault(): void
     {
         self::assertCount(0, $this->getLayoutRegistry()->getLayouts());
     }
@@ -107,7 +107,7 @@ class ConfigurationTest extends TestCase
      *
      * @throws \Exception
      */
-    public function testEmptyLayout(): void: void
+    public function testEmptyLayout(): void
     {
         $layout = $this->getSampleLayout('empty_layout');
 
@@ -120,7 +120,7 @@ class ConfigurationTest extends TestCase
      *
      * @throws \Exception
      */
-    public function testSimpleLayout(): void: void
+    public function testSimpleLayout(): void
     {
         $layout = $this->getSampleLayout('simple_layout');
         $mainSlot = $layout->getSlot('main');
@@ -138,7 +138,7 @@ class ConfigurationTest extends TestCase
      *
      * @throws \Exception
      */
-    public function testInheritance(): void: void
+    public function testInheritance(): void
     {
         $layout = $this->getSampleLayout('inheriting_layout');
         self::assertEquals('template2.html.twig', $layout->getTemplate());
@@ -158,7 +158,7 @@ class ConfigurationTest extends TestCase
      *
      * @throws \Exception
      */
-    public function testPositioning(): void: void
+    public function testPositioning(): void
     {
         $layout = $this->getSampleLayout('inheriting_layout');
         $mainSlot = $layout->getSlot('main');
@@ -220,7 +220,7 @@ class ConfigurationTest extends TestCase
      *
      * @throws \Exception
      */
-    protected function loadConfiguration(array $config = []): void: void
+    protected function loadConfiguration(array $config = []): void
     {
         $this->getExtension()->load($config, $this->container);
     }

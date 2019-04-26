@@ -1,5 +1,5 @@
 services:
-    CleverAge\LayoutBundle\Block\BlockRegistry:
+    CleverAge\LayoutBundle\Registry\BlockRegistry:
         public: false
         autowire: true
 

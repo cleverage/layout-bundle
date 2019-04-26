@@ -1,0 +1,18 @@
+services:
+    CleverAge\LayoutBundle\Templating\LayoutRenderer:
+        autowire: true
+        public: false
+
+    CleverAge\LayoutBundle\Templating\BlockRenderer:
+        autowire: true
+        public: false
+
+    CleverAge\LayoutBundle\Templating\SlotRenderer:
+        autowire: true
+        public: false
+
+    CleverAge\LayoutBundle\Templating\BlockRendererInterface:
+        alias: CleverAge\LayoutBundle\Templating\BlockRenderer
+
+    CleverAge\LayoutBundle\Templating\SlotRendererInterface:
+        alias: CleverAge\LayoutBundle\Templating\SlotRenderer
