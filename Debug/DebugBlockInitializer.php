@@ -37,8 +37,8 @@ class DebugBlockInitializer implements EventSubscriberInterface
     {
         return [
             'block.initialize' => [
-                ['onBeginInitialize', -255],
-                ['onEndInitialize', 255],
+                ['onBeginInitialize', 255],
+                ['onEndInitialize', -255],
             ],
         ];
     }

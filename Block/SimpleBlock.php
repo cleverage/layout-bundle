@@ -10,7 +10,7 @@
 
 namespace CleverAge\LayoutBundle\Block;
 
-use Symfony\Component\HttpFoundation\Request;
+use CleverAge\LayoutBundle\Event\BlockInitializationEvent;
 use Symfony\Component\Templating\EngineInterface;
 
 /**
@@ -46,9 +46,9 @@ class SimpleBlock implements BlockInterface, RendererAwareBlockInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function initialize(Request $request, array $parameters = []): void
+    public function initialize(BlockInitializationEvent $event): void
     {
         // Do nothing by default
     }
@@ -62,8 +62,6 @@ class SimpleBlock implements BlockInterface, RendererAwareBlockInterface
      */
     public function render(array $parameters = []): string
     {
-        $parameters['_block'] = $this;
-
         return $this->twig->render($this->template, $parameters);
     }
 

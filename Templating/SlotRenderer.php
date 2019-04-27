@@ -37,29 +37,18 @@ class SlotRenderer implements SlotRendererInterface
     /**
      * {@inheritDoc}
      */
-    public function renderSlot(LayoutInterface $layout, string $slotCode): \Generator
+    public function renderSlot(LayoutInterface $layout, string $slotCode): string
     {
+        $html = '';
         $slot = $layout->getSlot($slotCode);
         foreach ($slot->getBlockDefinitions() as $blockDefinition) {
             if (!$blockDefinition->isDisplayed()) {
                 continue;
             }
             $block = $this->blockRegistry->getBlock($blockDefinition->getBlockCode());
-            yield $this->blockRenderer->renderBlock($layout, $slot, $block);
-        }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isEmptySlot(LayoutInterface $layout, string $slotCode): bool
-    {
-        foreach ($this->renderSlot($layout, $slotCode) as $blockHtml) {
-            if (!empty(trim($blockHtml))) {
-                return false;
-            }
+            $html .= $this->blockRenderer->renderBlock($layout, $slot, $block);
         }
 
-        return true;
+        return $html;
     }
 }

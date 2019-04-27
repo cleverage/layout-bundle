@@ -10,6 +10,7 @@
 
 namespace CleverAge\LayoutBundle\Block;
 
+use CleverAge\LayoutBundle\Event\BlockInitializationEvent;
 use Cocur\Slugify\Slugify;
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\Cache\Adapter\AdapterInterface;
@@ -19,7 +20,7 @@ use Symfony\Component\HttpFoundation\Request;
  * A basic implementation of a cacheable block
  * Unless forced otherwise, there is cache only on blocks that use any kind of tags
  */
-class CacheableBlock extends SimpleBlock implements CacheAdapterAwareBlockInterface
+class CacheableBlock extends SimpleBlock implements CacheableBlockInterface, CacheAdapterAwareBlockInterface
 {
     /** @var Slugify */
     protected $slugifier;
@@ -73,18 +74,10 @@ class CacheableBlock extends SimpleBlock implements CacheAdapterAwareBlockInterf
         );
     }
 
-
     /**
-     * Should only add elements to the "Request Cacheable Attributes" array ; they are used to determine caching
-     * To implement in children :
-     *  - add request tag
-     *  - add parameter tag
-     *  - set cache lifetime
-     *
-     * @param Request $request
-     * @param array   $parameters
+     * {@inheritDoc}
      */
-    public function handleRequest(Request $request, array $parameters = [])
+    public function handleRequest(Request $request, array $parameters = []): void
     {
         // Prepare caching parameters here
         // Remove the flag to enable cache
@@ -92,34 +85,29 @@ class CacheableBlock extends SimpleBlock implements CacheAdapterAwareBlockInterf
     }
 
     /**
-     * By default, the block is fully cached if the request and parameters does not change
-     *
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    final public function initialize(Request $request, array $parameters = []): void
+    final public function initialize(BlockInitializationEvent $event): void
     {
         $this->addTag('BLOCK_'.$this->getCode());
-        $this->handleRequest($request, $parameters);
+        $this->handleRequest($event->getRequest(), $event->getViewParameters());
 
         if (!$this->enableCache || ($parameters['skip_init_cache'] ?? $this->forceInit)) {
-            $this->handleInitialization($request, $parameters);
+            $this->handleInitialization($event->getRequest(), $event->getViewParameters());
 
             return;
         }
 
         $this->cacheKeys[] = $this->getCacheKey();
         if (!$this->hasRecursiveCache()) {
-            $this->handleInitialization($request, $parameters);
+            $this->handleInitialization($event->getRequest(), $event->getViewParameters());
         }
     }
 
     /**
-     * Should do the classic initialization work, and also define entity-related tags
-     *
-     * @param Request $request
-     * @param array   $parameters
+     * {@inheritDoc}
      */
-    public function handleInitialization(Request $request, array $parameters = [])
+    public function handleInitialization(Request $request, array $parameters = []): void
     {
         // Implement here classic bloc init
         // Remove the flag to enable cache

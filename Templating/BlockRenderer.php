@@ -34,6 +34,7 @@ class BlockRenderer implements BlockRendererInterface
                     '_layout' => $this,
                     '_slot' => $slot,
                     '_block_definition' => $blockDefinition,
+                    '_block' => $block,
                 ],
                 $layout->getGlobalParameters(),
                 $blockDefinition->getParameters()

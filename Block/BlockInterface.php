@@ -10,7 +10,7 @@
 
 namespace CleverAge\LayoutBundle\Block;
 
-use Symfony\Component\HttpFoundation\Request;
+use CleverAge\LayoutBundle\Event\BlockInitializationEvent;
 
 /**
  * Represents the base interface for the block services that are used to render a given layout
@@ -21,10 +21,9 @@ interface BlockInterface
     /**
      * Set the block data depending on the current request
      *
-     * @param Request $request
-     * @param array   $parameters
+     * @param BlockInitializationEvent $event
      */
-    public function initialize(Request $request, array $parameters = []);
+    public function initialize(BlockInitializationEvent $event): void;
 
     /**
      * Render the twig template associated to the block, and return the HTML

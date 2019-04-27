@@ -21,15 +21,7 @@ interface SlotRendererInterface
      * @param LayoutInterface $layout
      * @param string          $slotCode
      *
-     * @return string[]|\Generator
+     * @return string
      */
-    public function renderSlot(LayoutInterface $layout, string $slotCode): \Generator;
-
-    /**
-     * @param LayoutInterface $layout
-     * @param string          $slotCode
-     *
-     * @return bool
-     */
-    public function isEmptySlot(LayoutInterface $layout, string $slotCode): bool;
+    public function renderSlot(LayoutInterface $layout, string $slotCode): string;
 }

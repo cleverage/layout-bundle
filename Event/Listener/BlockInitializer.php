@@ -35,11 +35,7 @@ class BlockInitializer
         $blockDefinition = $blockEvent->getBlockDefinition();
         $block = $this->blockRegistry->getBlock($blockDefinition->getBlockCode());
         try {
-            if ($block instanceof InitializableBlockInterface) {
-                $block->handleInitialization($blockEvent); // @todo
-            } else {
-                $block->initialize($blockEvent->getRequest(), $blockEvent->getBlockParameters());
-            }
+            $block->initialize($blockEvent);
         } catch (\Throwable $exception) {
             $originalBlockCode = $blockDefinition->getBlockCode();
             throw new \RuntimeException(

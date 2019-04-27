@@ -13,59 +13,45 @@ namespace CleverAge\LayoutBundle\Debug;
 use CleverAge\LayoutBundle\Layout\LayoutInterface;
 use CleverAge\LayoutBundle\Templating\SlotRendererInterface;
 use Symfony\Component\Stopwatch\Stopwatch;
+use Symfony\Component\Templating\EngineInterface;
 
 /**
  * Decorates the base slot renderer to time the rendering of slots
  */
-class DebugSlotRenderer implements SlotRendererInterface
+class DebugSlotRenderer extends AbstractDebugRenderer implements SlotRendererInterface
 {
     /** @var SlotRendererInterface */
     protected $baseSlotRenderer;
 
-    /** @var Stopwatch|null */
-    protected $stopwatch;
-
     /**
      * @param SlotRendererInterface $baseSlotRenderer
+     * @param EngineInterface       $engine
      * @param Stopwatch|null        $stopwatch
+     * @param bool                  $debugMode
      */
-    public function __construct(SlotRendererInterface $baseSlotRenderer, ?Stopwatch $stopwatch)
-    {
+    public function __construct(
+        SlotRendererInterface $baseSlotRenderer,
+        EngineInterface $engine,
+        ?Stopwatch $stopwatch,
+        bool $debugMode = false
+    ) {
         $this->baseSlotRenderer = $baseSlotRenderer;
+        $this->engine = $engine;
         $this->stopwatch = $stopwatch;
+        $this->debugMode = $debugMode;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function renderSlot(LayoutInterface $layout, string $slotCode): \Generator
+    public function renderSlot(LayoutInterface $layout, string $slotCode): string
     {
-        if ($this->stopwatch) {
-            $this->stopwatch->start("render.slot.{$slotCode}");
-        }
-
-        yield from $this->baseSlotRenderer->renderSlot($layout, $slotCode);
-
-        if ($this->stopwatch) {
-            $this->stopwatch->stop("render.slot.{$slotCode}");
-        }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isEmptySlot(LayoutInterface $layout, string $slotCode): bool
-    {
-        if ($this->stopwatch) {
-            $this->stopwatch->start("render.slot.{$slotCode}");
-        }
-
-        $result = $this->baseSlotRenderer->isEmptySlot($layout, $slotCode);
-
-        if ($this->stopwatch) {
-            $this->stopwatch->stop("render.slot.{$slotCode}");
-        }
-
-        return $result;
+        return $this->wrapHtml(
+            'slot',
+            $slotCode,
+            function () use ($layout, $slotCode) {
+                return $this->baseSlotRenderer->renderSlot($layout, $slotCode);
+            }
+        );
     }
 }
