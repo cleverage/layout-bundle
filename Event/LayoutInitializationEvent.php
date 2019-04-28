@@ -27,7 +27,7 @@ class LayoutInitializationEvent extends Event
     protected $layout;
 
     /** @var array */
-    protected $viewParameters;
+    protected $controllerResponse;
 
     /** @var Response|null */
     protected $response;
@@ -35,14 +35,14 @@ class LayoutInitializationEvent extends Event
     /**
      * @param Request         $request
      * @param LayoutInterface $layout
-     * @param array           $viewParameters
+     * @param array           $controllerResponse
      */
-    public function __construct(Request $request, LayoutInterface $layout, array $viewParameters = [])
+    public function __construct(Request $request, LayoutInterface $layout, array $controllerResponse = [])
     {
         $this->request = $request;
         $this->layout = $layout;
 
-        $this->viewParameters = array_merge(['layout' => $layout], $layout->getGlobalParameters(), $viewParameters);
+        $this->controllerResponse = $controllerResponse;
     }
 
     /**
@@ -80,16 +80,8 @@ class LayoutInitializationEvent extends Event
     /**
      * @return array
      */
-    public function getViewParameters(): array
+    public function getControllerResponse(): array
     {
-        return $this->viewParameters;
-    }
-
-    /**
-     * @param array $viewParameters
-     */
-    public function setViewParameters(array $viewParameters): void
-    {
-        $this->viewParameters = $viewParameters;
+        return $this->controllerResponse;
     }
 }

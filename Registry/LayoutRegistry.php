@@ -24,9 +24,6 @@ class LayoutRegistry
     /** @var LayoutInterface[] */
     protected $layouts = [];
 
-    /** @var BlockRegistry */
-    protected $blockRegistry;
-
     /**
      * Due to reversed DI, registries are created after this factory
      * This variable holds data, waiting for registry creation.
@@ -36,11 +33,9 @@ class LayoutRegistry
     protected $pendingBlocks = [];
 
     /**
-     * @param BlockRegistry $blockRegistry
      */
-    public function __construct(BlockRegistry $blockRegistry)
+    public function __construct()
     {
-        $this->blockRegistry = $blockRegistry;
         $this->updateRegistries();
     }
 
@@ -104,6 +99,7 @@ class LayoutRegistry
             foreach ($layoutSlotsDefinition as $slotCode => $slotDefinition) {
                 $slot = new Slot($slotCode);
                 foreach ($slotDefinition as $blockDefinitionCode => $blockDefinitionConfig) {
+                    /** @noinspection PhpUnhandledExceptionInspection */
                     $blockDefinition = new BlockDefinition($blockDefinitionCode, $blockDefinitionConfig);
                     $slot->addBlockDefinition($blockDefinition);
                 }
@@ -128,7 +124,6 @@ class LayoutRegistry
     {
         foreach ($this->pendingBlocks as $block) {
             $layout = new Layout(
-                $this->blockRegistry,
                 $block['layout_code'],
                 $block['layout_template'],
                 $block['layout_slots'],

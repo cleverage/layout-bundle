@@ -45,7 +45,7 @@ class SlotRenderer implements SlotRendererInterface
             if (!$blockDefinition->isDisplayed()) {
                 continue;
             }
-            $block = $this->blockRegistry->getBlock($blockDefinition->getBlockCode());
+            $block = $this->blockRegistry->getBlock($blockDefinition->getBlockCode(), $slot);
             $html .= $this->blockRenderer->renderBlock($layout, $slot, $block);
         }
 

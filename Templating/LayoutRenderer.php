@@ -49,16 +49,16 @@ class LayoutRenderer
     /**
      * @param Request $request
      * @param string  $layoutCode
-     * @param array   $additionalParameters
+     * @param array   $controllerResponse
      *
      * @return Response
      */
-    public function getLayoutResponse(Request $request, $layoutCode, array $additionalParameters = []): Response
+    public function getLayoutResponse(Request $request, $layoutCode, array $controllerResponse = []): Response
     {
         $layout = $this->layoutRegistry->getLayout($layoutCode);
 
         // Initialization
-        $event = new LayoutInitializationEvent($request, $layout, $additionalParameters);
+        $event = new LayoutInitializationEvent($request, $layout, $controllerResponse);
         $this->eventDispatcher->dispatch('layout.initialize', $event);
 
         // Rendering

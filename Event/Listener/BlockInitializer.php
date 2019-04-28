@@ -33,7 +33,7 @@ class BlockInitializer
     public function onBlockInitialize(BlockInitializationEvent $blockEvent): void
     {
         $blockDefinition = $blockEvent->getBlockDefinition();
-        $block = $this->blockRegistry->getBlock($blockDefinition->getBlockCode());
+        $block = $this->blockRegistry->getBlock($blockDefinition->getBlockCode(), $blockEvent->getSlot());
         try {
             $block->initialize($blockEvent);
         } catch (\Throwable $exception) {

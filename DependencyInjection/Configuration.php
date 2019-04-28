@@ -64,7 +64,9 @@ class Configuration implements ConfigurationInterface
     {
         $builder = new TreeBuilder();
         $node = $builder->root('parameters');
-        $node->useAttributeAsKey('code')->prototype('variable');
+        $node
+            ->useAttributeAsKey('code')
+            ->prototype('variable');
 
         return $node;
     }
@@ -101,7 +103,7 @@ class Configuration implements ConfigurationInterface
     {
         /** @var ArrayNodeDefinition $slotArrayNodeDefinition */
         $slotArrayNodeDefinition = $layoutDefinition
-            ->scalarNode('template')->isRequired()->end()
+            ->scalarNode('template')->end()
             ->scalarNode('parent')->end()
             ->variableNode('global_parameters')->end()
             ->arrayNode('slots')

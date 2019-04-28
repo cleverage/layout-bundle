@@ -3,6 +3,6 @@ services:
         public: false
         autowire: true
 
-    CleverAge\LayoutBundle\Layout\LayoutRegistry:
+    CleverAge\LayoutBundle\Registry\LayoutRegistry:
         public: false
         autowire: true

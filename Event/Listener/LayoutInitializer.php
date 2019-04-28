@@ -2,6 +2,7 @@
 
 namespace CleverAge\LayoutBundle\Event\Listener;
 
+use function array_merge;
 use CleverAge\LayoutBundle\Event\LayoutInitializationEvent;
 use CleverAge\LayoutBundle\Event\SlotInitializationEvent;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
@@ -45,7 +46,12 @@ class LayoutInitializer
 
         $response = $this->templating->renderResponse(
             $layoutEvent->getLayout()->getTemplate(),
-            $layoutEvent->getViewParameters()
+            array_merge(
+                $layoutEvent->getControllerResponse(),
+                [
+                    '_layout' => $layoutEvent->getLayout(),
+                ]
+            )
         );
 
         $layoutEvent->setResponse($response);

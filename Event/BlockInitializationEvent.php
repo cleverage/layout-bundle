@@ -21,7 +21,7 @@ class BlockInitializationEvent extends SlotInitializationEvent
     protected $blockDefinition;
 
     /** @var array */
-    protected $blockParameters;
+    protected $templateParameters = [];
 
     /**
      * @param SlotInitializationEvent $parentEvent
@@ -31,7 +31,6 @@ class BlockInitializationEvent extends SlotInitializationEvent
     {
         parent::__construct($parentEvent, $parentEvent->getSlot());
         $this->blockDefinition = $blockDefinition;
-        $this->blockParameters = array_merge($this->getViewParameters(), $blockDefinition->getParameters());
     }
 
     /**
@@ -45,16 +44,25 @@ class BlockInitializationEvent extends SlotInitializationEvent
     /**
      * @return array
      */
-    public function getBlockParameters(): array
+    public function getTemplateParameters(): array
     {
-        return $this->blockParameters;
+        return $this->templateParameters;
     }
 
     /**
-     * @param array $blockParameters
+     * @param array $templateParameters
      */
-    public function setBlockParameters(array $blockParameters): void
+    public function setTemplateParameters(array $templateParameters): void
     {
-        $this->blockParameters = $blockParameters;
+        $this->templateParameters = $templateParameters;
+    }
+
+    /**
+     * @param string $key
+     * @param mixed  $value
+     */
+    public function addTemplateParameter(string $key, $value): void
+    {
+        $this->templateParameters[$key] = $value;
     }
 }

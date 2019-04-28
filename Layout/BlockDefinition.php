@@ -10,8 +10,6 @@
 
 namespace CleverAge\LayoutBundle\Layout;
 
-use Symfony\Component\PropertyAccess\Exception\ExceptionInterface;
-
 /**
  * Represents the positioning of a block inside a layout's slot
  */
@@ -39,7 +37,7 @@ class BlockDefinition
      * @param string $code
      * @param array  $definition
      *
-     * @throws ExceptionInterface
+     * @throws \ReflectionException
      */
     public function __construct(string $code, array $definition = [])
     {

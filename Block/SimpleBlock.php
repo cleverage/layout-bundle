@@ -10,22 +10,22 @@
 
 namespace CleverAge\LayoutBundle\Block;
 
+use function array_merge;
 use CleverAge\LayoutBundle\Event\BlockInitializationEvent;
-use Symfony\Component\Templating\EngineInterface;
 
 /**
  * Generic block to render a twig template without any business logic
  */
-class SimpleBlock implements BlockInterface, RendererAwareBlockInterface
+class SimpleBlock implements BlockInterface
 {
-    /** @var EngineInterface */
-    protected $twig;
+    /** @var string */
+    protected $code;
 
     /** @var string */
     protected $template;
 
-    /** @var string */
-    protected $code;
+    /** @var array */
+    protected $templateParameters = [];
 
     /**
      * @param string $code
@@ -38,31 +38,40 @@ class SimpleBlock implements BlockInterface, RendererAwareBlockInterface
     }
 
     /**
-     * @param EngineInterface $renderer
-     */
-    public function setRenderer(EngineInterface $renderer): void
-    {
-        $this->twig = $renderer;
-    }
-
-    /**
      * {@inheritDoc}
      */
     public function initialize(BlockInitializationEvent $event): void
     {
-        // Do nothing by default
+        $this->templateParameters = array_merge(
+            $event->getLayout()->getGlobalParameters(),
+            $event->getBlockDefinition()->getParameters(),
+            $event->getTemplateParameters(),
+            $event->getControllerResponse(),
+            [
+                '_layout' => $event->getLayout(),
+                '_slot' => $event->getSlot(),
+                '_block_definition' => $event->getBlockDefinition(),
+                '_block' => $this,
+            ]
+        );
     }
 
     /**
-     * Render the twig template associated to the block, and return the HTML
-     *
-     * @param array $parameters
-     *
      * @return string
      */
-    public function render(array $parameters = []): string
+    public function getTemplate(): string
     {
-        return $this->twig->render($this->template, $parameters);
+        return $this->template;
+    }
+
+    /**
+     * Return the
+     *
+     * @return array
+     */
+    public function getTemplateParameters(): array
+    {
+        return $this->templateParameters;
     }
 
     /**

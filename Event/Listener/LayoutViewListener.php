@@ -47,17 +47,20 @@ class LayoutViewListener
         }
 
         // Prepare view parameters
-        $controllerParameters = $event->getControllerResult();
-        if ($controllerParameters instanceof Response) {
+        $controllerResponse = $event->getControllerResult();
+        if ($controllerResponse instanceof Response) {
             return;
         }
-        if (!is_array($controllerParameters)) {
+        if (null === $controllerResponse) {
+            $controllerResponse = [];
+        }
+        if (!is_array($controllerResponse)) {
             throw new \UnexpectedValueException('Controller response for layout must be an array');
         }
 
         // Rendering
         $event->setResponse(
-            $this->layoutRenderer->getLayoutResponse($request, $layoutAnnotation->getName(), $controllerParameters)
+            $this->layoutRenderer->getLayoutResponse($request, $layoutAnnotation->getName(), $controllerResponse)
         );
     }
 }

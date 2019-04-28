@@ -13,14 +13,26 @@ namespace CleverAge\LayoutBundle\Templating;
 use CleverAge\LayoutBundle\Block\BlockInterface;
 use CleverAge\LayoutBundle\Layout\LayoutInterface;
 use CleverAge\LayoutBundle\Layout\Slot;
+use Symfony\Component\Templating\EngineInterface;
 
 /**
  * {@inheritDoc}
  */
 class BlockRenderer implements BlockRendererInterface
 {
+    /** @var EngineInterface */
+    protected $engine;
+
     /** @var array */
     protected $blockRenders = [];
+
+    /**
+     * @param EngineInterface $engine
+     */
+    public function __construct(EngineInterface $engine)
+    {
+        $this->engine = $engine;
+    }
 
     /**
      * {@inheritDoc}
@@ -29,18 +41,9 @@ class BlockRenderer implements BlockRendererInterface
     {
         $blockDefinition = $slot->getBlockDefinition($block->getCode());
         if (!isset($this->blockRenders[$slot->getCode()][$blockDefinition->getCode()])) {
-            $parameters = array_merge(
-                [
-                    '_layout' => $this,
-                    '_slot' => $slot,
-                    '_block_definition' => $blockDefinition,
-                    '_block' => $block,
-                ],
-                $layout->getGlobalParameters(),
-                $blockDefinition->getParameters()
-            );
             try {
-                $this->blockRenders[$slot->getCode()][$blockDefinition->getCode()] = $block->render($parameters);
+                $render = $this->engine->render($block->getTemplate(), $block->getTemplateParameters());
+                $this->blockRenders[$slot->getCode()][$blockDefinition->getCode()] = $render;
             } catch (\Throwable $exception) {
                 $originalBlockCode = $blockDefinition->getBlockCode();
                 throw new \RuntimeException(

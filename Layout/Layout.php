@@ -3,18 +3,13 @@
 namespace CleverAge\LayoutBundle\Layout;
 
 use CleverAge\LayoutBundle\Block\BlockInterface;
-use CleverAge\LayoutBundle\Registry\BlockRegistry;
 use CleverAge\LayoutBundle\Exception\MissingSlotException;
-use CleverAge\LayoutBundle\Exception\MissingBlockException;
 
 /**
  * Represent a layout, hold the main (inherited) parameters and manage slot rendering
  */
 class Layout implements LayoutInterface
 {
-    /** @var BlockRegistry */
-    protected $blockRegistry;
-
     /** @var string */
     protected $code;
 
@@ -31,20 +26,17 @@ class Layout implements LayoutInterface
     protected $blocks;
 
     /**
-     * @param BlockRegistry $blockRegistry
-     * @param string        $code
-     * @param string        $template
-     * @param Slot[]        $slots
-     * @param array         $globalParameters
+     * @param string $code
+     * @param string $template
+     * @param Slot[] $slots
+     * @param array  $globalParameters
      */
     public function __construct(
-        BlockRegistry $blockRegistry,
         string $code,
         string $template,
         array $slots,
         array $globalParameters = []
     ) {
-        $this->blockRegistry = $blockRegistry;
         $this->code = $code;
         $this->template = $template;
         $this->slots = $slots;
@@ -97,17 +89,5 @@ class Layout implements LayoutInterface
         }
 
         return $this->slots[$slotCode];
-    }
-
-    /**
-     * @param string $code
-     *
-     * @throws MissingBlockException
-     *
-     * @return BlockInterface
-     */
-    public function getBlock(string $code): BlockInterface
-    {
-        return $this->blockRegistry->getBlock($code);
     }
 }

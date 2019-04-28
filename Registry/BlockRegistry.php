@@ -11,11 +11,10 @@
 namespace CleverAge\LayoutBundle\Registry;
 
 use CleverAge\LayoutBundle\Block\BlockInterface;
-use CleverAge\LayoutBundle\Block\CacheAdapterAwareBlockInterface;
-use CleverAge\LayoutBundle\Block\RendererAwareBlockInterface;
+use CleverAge\LayoutBundle\Block\SimpleBlock;
 use CleverAge\LayoutBundle\Exception\DuplicatedBlockException;
 use CleverAge\LayoutBundle\Exception\MissingBlockException;
-use Symfony\Component\Cache\Adapter\AdapterInterface;
+use CleverAge\LayoutBundle\Layout\Slot;
 use Symfony\Component\Templating\EngineInterface;
 
 /**
@@ -24,31 +23,17 @@ use Symfony\Component\Templating\EngineInterface;
 class BlockRegistry
 {
     /** @var EngineInterface */
-    protected $renderer;
+    protected $engine;
 
     /** @var BlockInterface[] */
     protected $blocks = [];
 
-    /** @var AdapterInterface */
-    protected $cacheAdapter;
-
     /**
-     * Application wide switch
-     *
-     * @var bool
+     * @param EngineInterface $engine
      */
-    protected $enableCache;
-
-    /**
-     * @param EngineInterface  $renderer
-     * @param AdapterInterface $cacheAdapter
-     * @param bool             $enableCache
-     */
-    public function __construct(EngineInterface $renderer, $cacheAdapter = null, bool $enableCache = true)
+    public function __construct(EngineInterface $engine)
     {
-        $this->renderer = $renderer;
-        $this->cacheAdapter = $cacheAdapter;
-        $this->enableCache = $enableCache;
+        $this->engine = $engine;
     }
 
     /**
@@ -70,29 +55,28 @@ class BlockRegistry
             throw DuplicatedBlockException::create($block->getCode());
         }
 
-        // Automatically inject services, if available
-        if ($block instanceof RendererAwareBlockInterface) {
-            $block->setRenderer($this->renderer);
-        }
-        if (null !== $this->cacheAdapter && $block instanceof CacheAdapterAwareBlockInterface) {
-            $block->setEnableCache($this->enableCache);
-            $block->setCacheAdapter($this->cacheAdapter);
-        }
-
         // Register the block
         $this->blocks[$block->getCode()] = $block;
     }
 
     /**
-     * @param string $blockCode
-     *
-     * @throws MissingBlockException
+     * @param string    $blockCode
+     * @param Slot|null $slot
      *
      * @return BlockInterface
      */
-    public function getBlock(string $blockCode): BlockInterface
+    public function getBlock(string $blockCode, Slot $slot = null): BlockInterface
     {
         if (!$this->hasBlock($blockCode)) {
+            if ($slot) {
+                $template = "Layout/{$slot->getCode()}/{$blockCode}.html.twig";
+                if ($this->engine->exists($template)) {
+                    $block = new SimpleBlock($blockCode, $template);
+                    $this->addBlock($block);
+
+                    return $block;
+                }
+            }
             throw MissingBlockException::create($blockCode);
         }
 

@@ -26,13 +26,18 @@ interface BlockInterface
     public function initialize(BlockInitializationEvent $event): void;
 
     /**
-     * Render the twig template associated to the block, and return the HTML
-     *
-     * @param array $parameters
+     * Return the template that should be used for rendering
      *
      * @return string
      */
-    public function render(array $parameters = []): string;
+    public function getTemplate(): string;
+
+    /**
+     * Return the
+     *
+     * @return array
+     */
+    public function getTemplateParameters(): array;
 
     /**
      * Get the code of the block

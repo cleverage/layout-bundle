@@ -26,7 +26,7 @@ class SlotInitializationEvent extends LayoutInitializationEvent
      */
     public function __construct(LayoutInitializationEvent $parentEvent, Slot $slot)
     {
-        parent::__construct($parentEvent->getRequest(), $parentEvent->getLayout(), $parentEvent->getViewParameters());
+        parent::__construct($parentEvent->getRequest(), $parentEvent->getLayout(), $parentEvent->getControllerResponse());
         $this->slot = $slot;
     }
 

@@ -27,33 +27,16 @@ class LayoutResolverListener
     {
         $request = $event->getRequest();
         $layoutAnnotation = $request->attributes->get('_layout');
-
-        if ($layoutAnnotation instanceof Layout && !$layoutAnnotation->getName()) {
-            $this->resolveLayoutTemplate($event, $layoutAnnotation);
-        } elseif (\is_string($layoutAnnotation) && !empty($layoutAnnotation)) {
-            $request->attributes->set('_layout', new Layout(['name' => $layoutAnnotation]));
+        if (null === $layoutAnnotation || '' === $layoutAnnotation) {
+            return; // No layout
         }
-    }
 
-    /**
-     * @param FilterControllerEvent $event
-     * @param Layout                $layoutAnnotation
-     */
-    protected function resolveLayoutTemplate(FilterControllerEvent $event, Layout $layoutAnnotation): void
-    {
-        @trigger_error(
-            'Magic layout template resolution is deprecated. Always set the layout name in the layout annotation',
-            E_USER_DEPRECATED
-        );
-
-        $controllerCallable = $event->getController();
-        $controllerClass = \get_class($controllerCallable[0]);
-        $controllerClassParts = explode('\\', $controllerClass);
-        $controllerName = end($controllerClassParts);
-        $controllerName = strtolower(str_replace('Controller', '', $controllerName));
-        $actionName = $controllerCallable[1];
-        $actionName = strtolower(str_replace('Action', '', $actionName));
-
-        $layoutAnnotation->setName($controllerName.'_'.$actionName);
+        if (\is_string($layoutAnnotation)) {
+            $layoutAnnotation = new Layout(['name' => $layoutAnnotation]);
+            $request->attributes->set('_layout', $layoutAnnotation);
+        }
+        if (!$layoutAnnotation instanceof Layout || !$layoutAnnotation->getName()) {
+            throw new \UnexpectedValueException("Missing layout name for route {$request->attributes->get('_route')}");
+        }
     }
 }

@@ -14,7 +14,7 @@ use CleverAge\LayoutBundle\Registry\BlockRegistry;
 use Sidus\BaseBundle\DependencyInjection\Compiler\GenericCompilerPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
-use CleverAge\LayoutBundle\Layout\LayoutRegistry;
+use CleverAge\LayoutBundle\Registry\LayoutRegistry;
 
 /**
  * Class CleverAgeLayoutBundle

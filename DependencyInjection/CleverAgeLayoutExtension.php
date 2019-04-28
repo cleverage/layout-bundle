@@ -10,7 +10,7 @@
 
 namespace CleverAge\LayoutBundle\DependencyInjection;
 
-use CleverAge\LayoutBundle\Layout\LayoutRegistry;
+use CleverAge\LayoutBundle\Registry\LayoutRegistry;
 use Sidus\BaseBundle\DependencyInjection\SidusBaseExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
