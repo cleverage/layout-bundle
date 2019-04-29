@@ -65,13 +65,14 @@ class CacheableBlock extends SimpleBlock implements CacheableBlockInterface, Cac
     public function __construct($code, $template)
     {
         parent::__construct($code, $template);
+    }
 
-        $this->slugifier = Slugify::create(
-            [
-                'lowercase' => false,
-                'regexp' => '/([^A-Za-z0-9%_=]|-)+/',
-            ]
-        );
+    /**
+     * @param Slugify $slugifier
+     */
+    public function setSlugifier(Slugify $slugifier): void
+    {
+        $this->slugifier = $slugifier;
     }
 
     /**

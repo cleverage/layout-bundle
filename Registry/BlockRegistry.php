@@ -15,6 +15,7 @@ use CleverAge\LayoutBundle\Block\CacheAdapterAwareBlockInterface;
 use CleverAge\LayoutBundle\Block\RendererAwareBlockInterface;
 use CleverAge\LayoutBundle\Exception\DuplicatedBlockException;
 use CleverAge\LayoutBundle\Exception\MissingBlockException;
+use Cocur\Slugify\Slugify;
 use Symfony\Component\Cache\Adapter\AdapterInterface;
 use Symfony\Component\Templating\EngineInterface;
 
@@ -31,6 +32,9 @@ class BlockRegistry
 
     /** @var AdapterInterface */
     protected $cacheAdapter;
+
+    /** @var Slugify */
+    protected $slugifier;
 
     /**
      * Application wide switch
@@ -49,6 +53,12 @@ class BlockRegistry
         $this->renderer = $renderer;
         $this->cacheAdapter = $cacheAdapter;
         $this->enableCache = $enableCache;
+        $this->slugifier = Slugify::create(
+            [
+                'lowercase' => false,
+                'regexp' => '/([^A-Za-z0-9%_=]|-)+/',
+            ]
+        );
     }
 
     /**
@@ -77,6 +87,7 @@ class BlockRegistry
         if (null !== $this->cacheAdapter && $block instanceof CacheAdapterAwareBlockInterface) {
             $block->setEnableCache($this->enableCache);
             $block->setCacheAdapter($this->cacheAdapter);
+            $block->setSlugifier($this->slugifier);
         }
 
         // Register the block

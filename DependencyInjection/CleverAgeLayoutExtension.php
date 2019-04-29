@@ -13,6 +13,8 @@ namespace CleverAge\LayoutBundle\DependencyInjection;
 use CleverAge\LayoutBundle\Layout\LayoutRegistry;
 use Sidus\BaseBundle\DependencyInjection\SidusBaseExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
+use Symfony\Component\Config\FileLocator;
 
 /**
  * This is the class that loads and manages your bundle configuration.
@@ -33,5 +35,12 @@ class CleverAgeLayoutExtension extends SidusBaseExtension
 
         $layoutRegistryDefinition = $container->getDefinition(LayoutRegistry::class);
         $layoutRegistryDefinition->addMethodCall('parseConfiguration', [$config]);
+
+        if ($config['debug_mode'] ?? false) {
+            $refl = new \ReflectionClass($this); // Supports for class extending this one
+            $path = \dirname($refl->getFileName(), 2).'/Resources/config';
+            $loader = new YamlFileLoader($container, new FileLocator($path));
+            $loader->load('debug.yml');
+        }
     }
 }

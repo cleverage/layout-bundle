@@ -10,6 +10,7 @@
 
 namespace CleverAge\LayoutBundle\Block;
 
+use Cocur\Slugify\Slugify;
 use Symfony\Component\Cache\Adapter\AdapterInterface;
 
 /**
@@ -26,4 +27,9 @@ interface CacheAdapterAwareBlockInterface
      * @param bool $enableCache
      */
     public function setEnableCache(bool $enableCache);
+
+    /**
+     * @param Slugify $slugifier
+     */
+    public function setSlugifier(Slugify $slugifier): void;
 }
