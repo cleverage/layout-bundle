@@ -48,6 +48,7 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
+            ->booleanNode('debug_mode')->defaultFalse()->end()
             ->append($this->getLayoutsConfigTreeBuilder())
             ->append($this->getParametersNodeTreeBuilder())
             ->end();
