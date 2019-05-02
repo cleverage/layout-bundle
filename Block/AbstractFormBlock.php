@@ -74,8 +74,11 @@ abstract class AbstractFormBlock extends SimpleBlock
         if (!$this->displayed) {
             return '';
         }
+        if ($this->form) {
+            $parameters = array_merge($parameters, ['form' => $this->form->createView()]);
+        }
 
-        return parent::render(array_merge($parameters, ['form' => $this->form->createView()]));
+        return parent::render($parameters);
     }
 
     /**
