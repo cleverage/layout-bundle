@@ -31,7 +31,7 @@ class BlockRenderer implements BlockRendererInterface
         if (!isset($this->blockRenders[$slot->getCode()][$blockDefinition->getCode()])) {
             $parameters = array_merge(
                 [
-                    '_layout' => $this,
+                    '_layout' => $layout,
                     '_slot' => $slot,
                     '_block_definition' => $blockDefinition,
                     '_block' => $block,
