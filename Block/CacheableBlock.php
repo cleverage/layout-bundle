@@ -90,18 +90,19 @@ class CacheableBlock extends SimpleBlock implements CacheableBlockInterface, Cac
      */
     final public function initialize(BlockInitializationEvent $event): void
     {
+        $parameters = $event->getViewParameters();
         $this->addTag('BLOCK_'.$this->getCode());
-        $this->handleRequest($event->getRequest(), $event->getViewParameters());
+        $this->handleRequest($event->getRequest(), $parameters);
 
         if (!$this->enableCache || ($parameters['skip_init_cache'] ?? $this->forceInit)) {
-            $this->handleInitialization($event->getRequest(), $event->getViewParameters());
+            $this->handleInitialization($event->getRequest(), $parameters);
 
             return;
         }
 
         $this->cacheKeys[] = $this->getCacheKey();
         if (!$this->hasRecursiveCache()) {
-            $this->handleInitialization($event->getRequest(), $event->getViewParameters());
+            $this->handleInitialization($event->getRequest(), $parameters);
         }
     }
 
