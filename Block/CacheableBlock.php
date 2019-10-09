@@ -58,6 +58,9 @@ class CacheableBlock extends SimpleBlock implements CacheableBlockInterface, Cac
      */
     protected $enableCache = true;
 
+    /** @var bool */
+    protected $initialized = false;
+
     /**
      * @param string $code
      * @param string $template
@@ -96,6 +99,7 @@ class CacheableBlock extends SimpleBlock implements CacheableBlockInterface, Cac
 
         if (!$this->enableCache || ($parameters['skip_init_cache'] ?? $this->forceInit)) {
             $this->handleInitialization($event->getRequest(), $parameters);
+            $this->initialized = true;
 
             return;
         }
@@ -103,6 +107,7 @@ class CacheableBlock extends SimpleBlock implements CacheableBlockInterface, Cac
         $this->cacheKeys[] = $this->getCacheKey();
         if (!$this->hasRecursiveCache()) {
             $this->handleInitialization($event->getRequest(), $parameters);
+            $this->initialized = true;
         }
     }
 
@@ -133,7 +138,10 @@ class CacheableBlock extends SimpleBlock implements CacheableBlockInterface, Cac
             return $this->handleRendering($parameters);
         }
 
-        $this->cacheKeys[] = $this->getCacheKey();
+        $cacheKey = $this->getCacheKey();
+        if (!in_array($cacheKey, $this->cacheKeys, true)) {
+            $this->cacheKeys[] = $cacheKey;
+        }
 
         // There can be multiple keys that uses the same tags :
         // it will be useful for init caching & still correct invalidation
@@ -148,6 +156,9 @@ class CacheableBlock extends SimpleBlock implements CacheableBlockInterface, Cac
                 $result = null;
             }
             if (null === $html) {
+                if (!$this->initialized) {
+                    throw new \RuntimeException("Trying to render uninitialized block {$this->getCode()}");
+                }
                 $html = $this->handleRendering($parameters);
             }
             if ($result) {
