@@ -83,4 +83,14 @@ class SimpleBlock implements BlockInterface
     {
         return $this->code;
     }
+
+    /**
+     * Skip the render if true
+     *
+     * @return bool
+     */
+    public function isDisplayed(): bool
+    {
+        return true;
+    }
 }

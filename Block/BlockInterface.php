@@ -33,11 +33,18 @@ interface BlockInterface
     public function getTemplate(): string;
 
     /**
-     * Return the
+     * Return the template parameters
      *
      * @return array
      */
     public function getTemplateParameters(): array;
+
+    /**
+     * Skip the render if true
+     *
+     * @return bool
+     */
+    public function isDisplayed(): bool;
 
     /**
      * Get the code of the block
