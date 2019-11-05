@@ -10,14 +10,14 @@
 
 namespace CleverAge\LayoutBundle\Debug;
 
-use CleverAge\LayoutBundle\Event\BlockInitializationEvent;
+use CleverAge\LayoutBundle\Event\SlotInitializationEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Stopwatch\Stopwatch;
 
 /**
- * Decorates the base slot renderer to time the rendering of slots
+ * Decorates the base slot initializer to time the initialization of slots
  */
-class DebugBlockInitializer implements EventSubscriberInterface
+class DebugStopwatchSlotInitializer implements EventSubscriberInterface
 {
     /** @var Stopwatch|null */
     protected $stopwatch;
@@ -36,7 +36,7 @@ class DebugBlockInitializer implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            'block.initialize' => [
+            'slot.initialize' => [
                 ['onBeginInitialize', 255],
                 ['onEndInitialize', -255],
             ],
@@ -44,24 +44,24 @@ class DebugBlockInitializer implements EventSubscriberInterface
     }
 
     /**
-     * @param BlockInitializationEvent $event
+     * @param SlotInitializationEvent $event
      */
-    public function onBeginInitialize(BlockInitializationEvent $event): void
+    public function onBeginInitialize(SlotInitializationEvent $event): void
     {
         if (!$this->stopwatch) {
             return;
         }
-        $this->stopwatch->start("block.initialize.{$event->getBlockDefinition()->getCode()}");
+        $this->stopwatch->start("slot.initialize.{$event->getSlot()->getCode()}");
     }
 
     /**
-     * @param BlockInitializationEvent $event
+     * @param SlotInitializationEvent $event
      */
-    public function onEndInitialize(BlockInitializationEvent $event): void
+    public function onEndInitialize(SlotInitializationEvent $event): void
     {
         if (!$this->stopwatch) {
             return;
         }
-        $this->stopwatch->stop("block.initialize.{$event->getBlockDefinition()->getCode()}");
+        $this->stopwatch->stop("slot.initialize.{$event->getSlot()->getCode()}");
     }
 }

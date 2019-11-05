@@ -36,11 +36,17 @@ class CleverAgeLayoutExtension extends SidusBaseExtension
         $layoutRegistryDefinition = $container->getDefinition(LayoutRegistry::class);
         $layoutRegistryDefinition->addMethodCall('parseConfiguration', [$config]);
 
-        if ($config['debug_mode'] ?? false) {
+        if ($config['debug_stopwatch']) {
             $refl = new \ReflectionClass($this); // Supports for class extending this one
             $path = \dirname($refl->getFileName(), 2).'/Resources/config';
             $loader = new YamlFileLoader($container, new FileLocator($path));
-            $loader->load('debug.yml');
+            $loader->load('debug_stopwatch.yml');
+        }
+        if ($config['debug_html']) {
+            $refl = new \ReflectionClass($this); // Supports for class extending this one
+            $path = \dirname($refl->getFileName(), 2).'/Resources/config';
+            $loader = new YamlFileLoader($container, new FileLocator($path));
+            $loader->load('debug_html.yml');
         }
     }
 }

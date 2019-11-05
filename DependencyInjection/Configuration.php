@@ -48,7 +48,8 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
-            ->booleanNode('debug_mode')->defaultFalse()->end()
+            ->booleanNode('debug_stopwatch')->defaultFalse()->end()
+            ->booleanNode('debug_html')->defaultFalse()->end()
             ->append($this->getLayoutsConfigTreeBuilder())
             ->append($this->getParametersNodeTreeBuilder())
             ->end();

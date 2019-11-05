@@ -1,0 +1,24 @@
+services:
+    CleverAge\LayoutBundle\Debug\DebugStopwatchBlockRenderer:
+        decorates: CleverAge\LayoutBundle\Templating\BlockRenderer
+        autowire: true
+        arguments:
+            $baseBlockRenderer: '@CleverAge\LayoutBundle\Debug\DebugStopwatchBlockRenderer.inner'
+
+    CleverAge\LayoutBundle\Debug\DebugStopwatchSlotRenderer:
+        decorates: CleverAge\LayoutBundle\Templating\SlotRenderer
+        autowire: true
+        arguments:
+            $baseSlotRenderer: '@CleverAge\LayoutBundle\Debug\DebugStopwatchSlotRenderer.inner'
+
+    CleverAge\LayoutBundle\Debug\DebugStopwatchBlockInitializer:
+        autowire: true
+        public: false
+        tags:
+            - { name: kernel.event_subscriber }
+
+    CleverAge\LayoutBundle\Debug\DebugStopwatchSlotInitializer:
+        autowire: true
+        public: false
+        tags:
+            - { name: kernel.event_subscriber }

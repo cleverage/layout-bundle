@@ -18,27 +18,21 @@ use Symfony\Component\Templating\EngineInterface;
 /**
  * Decorates the base slot renderer to time the rendering of slots
  */
-class DebugSlotRenderer extends AbstractDebugRenderer implements SlotRendererInterface
+class DebugStopwatchSlotRenderer extends AbstractDebugStopwatchRenderer implements SlotRendererInterface
 {
     /** @var SlotRendererInterface */
     protected $baseSlotRenderer;
 
     /**
      * @param SlotRendererInterface $baseSlotRenderer
-     * @param EngineInterface       $engine
      * @param Stopwatch|null        $stopwatch
-     * @param bool                  $debugMode
      */
     public function __construct(
         SlotRendererInterface $baseSlotRenderer,
-        EngineInterface $engine,
-        ?Stopwatch $stopwatch,
-        bool $debugMode = false
+        ?Stopwatch $stopwatch
     ) {
         $this->baseSlotRenderer = $baseSlotRenderer;
-        $this->engine = $engine;
         $this->stopwatch = $stopwatch;
-        $this->debugMode = $debugMode;
     }
 
     /**

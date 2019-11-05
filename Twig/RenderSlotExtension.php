@@ -19,7 +19,6 @@ use Twig\TwigFunction;
 
 /**
  * Render a slot using layout configuration
- * Optionally wraps the HTML into a debug div
  */
 class RenderSlotExtension extends AbstractExtension
 {
@@ -29,19 +28,14 @@ class RenderSlotExtension extends AbstractExtension
     /** @var SlotRendererInterface */
     protected $slotRenderer;
 
-    /** @var bool */
-    protected $debugMode = false;
-
     /**
      * @param Environment           $twig
      * @param SlotRendererInterface $slotRenderer
-     * @param bool                  $debugMode
      */
-    public function __construct(Environment $twig, SlotRendererInterface $slotRenderer, bool $debugMode = false)
+    public function __construct(Environment $twig, SlotRendererInterface $slotRenderer)
     {
         $this->twig = $twig;
         $this->slotRenderer = $slotRenderer;
-        $this->debugMode = $debugMode;
     }
 
     /**
